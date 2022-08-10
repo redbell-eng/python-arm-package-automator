@@ -60,3 +60,31 @@ module "package-s3-access-role" {
 }
 
 # AWS ECS Cluster Setup
+resource "aws_ecs_cluster" "package-cluster" {
+  name = "python-arm-package-generator-${var.environment}-cluster"
+}
+
+resource "aws_ecs_task_definition" "package-service-definition" {
+  family                = "python-arm-packager"
+  requires_compatibilities = ["FARGATE"]
+  network_mode = "awsvpc"
+  cpu = 256
+  memory = 1024
+
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture = "ARM64"
+  }
+
+  container_definitions = <<TASK_DEF
+[
+  {
+    "name": "python-arm-packager-service",
+    "image": "${aws_ecr_repository}",
+    "cpu": 256,
+    "memory": 1024,
+    "essential": true
+  }
+]
+TASK_DEF
+}
