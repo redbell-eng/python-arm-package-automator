@@ -31,5 +31,8 @@ override.tf.json
 # Ignore .tfvars files since they can contain values we don't want to expose in a public repo (but NOT secrets)
 *.tfvars
 
+# Ignore Packer vars files
+*.pkrvars.hcl
+
 # Ignore IDE specific files
 .idea/
