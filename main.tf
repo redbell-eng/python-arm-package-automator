@@ -93,7 +93,7 @@ resource "aws_ecs_task_definition" "package-service-definition" {
   cpu = 256
   memory = 1024
 
-  execution_role_arn = module.package-s3-access-role.iam_role_arn
+  execution_role_arn = module.package-cluster-execution-role.iam_role_arn
 
   runtime_platform {
     operating_system_family = "LINUX"
