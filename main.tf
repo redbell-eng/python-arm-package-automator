@@ -65,7 +65,11 @@ resource "aws_ecs_cluster" "package-cluster" {
 
   configuration {
     execute_command_configuration {
-      logging    = "DEFAULT"
+      logging    = "OVERRIDE"
+
+      log_configuration {
+        cloud_watch_log_group_name = "/ecs/python-arm-package-generator-${var.environment}-cluster"
+      }
     }
   }
 }
