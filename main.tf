@@ -53,7 +53,7 @@ module "package-s3-access-role" {
   create_role = true
   role_requires_mfa = false
 
-  role_name = "arm-package-generator-${var.environment}-task-role"
+  role_name = "arm-package-generator-${var.environment}-ecs-task-role"
   custom_role_policy_arns = [
     module.package-s3-access-policy.arn
   ]
@@ -80,7 +80,7 @@ module "package-cluster-execution-role" {
   create_role = true
   role_requires_mfa = false
 
-  role_name = "arm-package-generator-${var.environment}-cluster-role"
+  role_name = "arm-package-generator-${var.environment}-ecs-cluster-role"
   custom_role_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
   ]
