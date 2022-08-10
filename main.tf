@@ -27,8 +27,8 @@ data "aws_iam_policy_document" "package-cluster-policy-doc" {
       "s3:ListBucket"
     ]
     resources = [
-      aws_s3_bucket.package-output-bucket.id,
-      "${aws_s3_bucket.package-output-bucket.id}/*"
+      aws_s3_bucket.package-output-bucket.arn,
+      "${aws_s3_bucket.package-output-bucket.arn}/*"
     ]
   }
 }
@@ -58,3 +58,5 @@ module "package-s3-access-role" {
     module.package-s3-access-policy.arn
   ]
 }
+
+# AWS ECS Cluster Setup
