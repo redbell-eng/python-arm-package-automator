@@ -53,16 +53,37 @@ module "package-s3-access-role" {
   create_role = true
   role_requires_mfa = false
 
-  role_name = "arm-package-generator-${var.environment}-cluster-role"
+  role_name = "arm-package-generator-${var.environment}-task-role"
   custom_role_policy_arns = [
-    module.package-s3-access-policy.arn,
-    "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
+    module.package-s3-access-policy.arn
   ]
 }
 
 # AWS ECS Cluster Setup
 resource "aws_ecs_cluster" "package-cluster" {
   name = "python-arm-package-generator-${var.environment}-cluster"
+
+  configuration {
+    execute_command_configuration {
+      logging    = "DEFAULT"
+    }
+  }
+}
+
+module "package-cluster-execution-role" {
+  source = "registry.terraform.io/terraform-aws-modules/iam/aws//modules/iam-assumable-role"
+
+  trusted_role_services = [
+    "ecs-tasks.amazonaws.com"
+  ]
+
+  create_role = true
+  role_requires_mfa = false
+
+  role_name = "arm-package-generator-${var.environment}-cluster-role"
+  custom_role_policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
+  ]
 }
 
 resource "aws_ecs_task_definition" "package-service-definition" {
