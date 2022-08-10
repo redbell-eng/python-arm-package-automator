@@ -55,7 +55,8 @@ module "package-s3-access-role" {
 
   role_name = "arm-package-generator-${var.environment}-cluster-role"
   custom_role_policy_arns = [
-    module.package-s3-access-policy.arn
+    module.package-s3-access-policy.arn,
+    "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
   ]
 }
 
@@ -70,6 +71,8 @@ resource "aws_ecs_task_definition" "package-service-definition" {
   network_mode = "awsvpc"
   cpu = 256
   memory = 1024
+
+  execution_role_arn = module.package-s3-access-role.iam_role_arn
 
   runtime_platform {
     operating_system_family = "LINUX"
