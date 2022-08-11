@@ -1,7 +1,6 @@
 # The ECR image repo for the Docker image that the package automator will use
 resource "aws_ecrpublic_repository" "package-automator-repo" {
   provider = aws.us-east-1
-  force_delete = true
   repository_name = "arm-package-generator-container"
 }
 
@@ -114,7 +113,7 @@ resource "aws_ecs_task_definition" "package-task-definition" {
         "install"
       ],
     "name": "python-arm-packager-task",
-    "image": "${aws_ecr_repository.package-automator-repo.repository_url}",
+    "image": "${aws_ecrpublic_repository.package-automator-repo.repository_uri}",
     "cpu": 256,
     "memory": 1024
   }
