@@ -110,7 +110,7 @@ resource "aws_ecs_task_definition" "package-service-definition" {
     "name": "python-arm-packager-task",
     "image": "${aws_ecr_repository.package-automator-repo.repository_url}",
     "cpu": 256,
-    "memory": 1024,
+    "memory": 1024
   }
 ]
 TASK_DEF
