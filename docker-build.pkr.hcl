@@ -21,10 +21,18 @@ source "docker" "arm-container" {
 build {
   sources = ["source.docker.arm-container"]
 
+  # Install awscli
+  provisioner "shell" {
+    inline = [
+      "python -m pip install --upgrade pip",
+      "python -m pip install --no-cache-dir awscli"
+    ]
+  }
+
   # Tag it and push it to ECR
   post-processors {
     post-processor "docker-tag" {
-      repository = "${var.ecr_repo}/arm-package-generator-container"
+      repository = "${var.ecr_repo}"
       tags = ["latest"]
     }
 

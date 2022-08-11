@@ -14,6 +14,14 @@ resource "aws_s3_bucket_acl" "package-output-bucket-acl" {
   acl = "private"
 }
 
+resource "aws_s3_bucket_public_access_block" "package-output-bucket-block-public" {
+  bucket = aws_s3_bucket.package-output-bucket.id
+  block_public_acls = true
+  block_public_policy = true
+  ignore_public_acls = true
+  restrict_public_buckets = true
+}
+
 # IAM Setup for the ECS tasks to access the relevant S3 bucket (above)
 data "aws_iam_policy_document" "package-cluster-policy-doc" {
   statement {
