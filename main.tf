@@ -77,11 +77,11 @@ module "package-cluster-execution-role" {
 
   role_name = "arm-package-generator-${var.environment}-ecs-cluster-role"
   custom_role_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
+    "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
   ]
 }
 
-resource "aws_ecs_task_definition" "package-service-definition" {
+resource "aws_ecs_task_definition" "package-task-definition" {
   family                = "python-arm-packager"
   requires_compatibilities = ["FARGATE"]
   network_mode = "awsvpc"
@@ -114,4 +114,9 @@ resource "aws_ecs_task_definition" "package-service-definition" {
   }
 ]
 TASK_DEF
+}
+
+# CloudWatch log group for the above task
+resource "aws_cloudwatch_log_group" "packager-log-group" {
+  name = "/ecs/python-arm-packager-dev"
 }
