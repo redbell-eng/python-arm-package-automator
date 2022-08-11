@@ -55,23 +55,14 @@ module "package-s3-access-role" {
 
   role_name = "arm-package-generator-${var.environment}-ecs-task-role"
   custom_role_policy_arns = [
-    module.package-s3-access-policy.arn
+    module.package-s3-access-policy.arn,
+    "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
   ]
 }
 
 # AWS ECS Cluster Setup
 resource "aws_ecs_cluster" "package-cluster" {
   name = "python-arm-package-generator-${var.environment}-cluster"
-
-  configuration {
-    execute_command_configuration {
-      logging    = "OVERRIDE"
-
-      log_configuration {
-        cloud_watch_log_group_name = "/ecs/python-arm-package-generator-${var.environment}-cluster"
-      }
-    }
-  }
 }
 
 module "package-cluster-execution-role" {
@@ -98,6 +89,7 @@ resource "aws_ecs_task_definition" "package-service-definition" {
   memory = 1024
 
   execution_role_arn = module.package-cluster-execution-role.iam_role_arn
+  task_role_arn = module.package-s3-access-role.iam_role_arn
 
   runtime_platform {
     operating_system_family = "LINUX"
@@ -107,11 +99,18 @@ resource "aws_ecs_task_definition" "package-service-definition" {
   container_definitions = <<TASK_DEF
 [
   {
-    "name": "python-arm-packager-service",
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/python-arm-packager-${var.environment}",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+    },
+    "name": "python-arm-packager-task",
     "image": "${aws_ecr_repository.package-automator-repo.repository_url}",
     "cpu": 256,
     "memory": 1024,
-    "essential": true
   }
 ]
 TASK_DEF
