@@ -1,8 +1,8 @@
 # The ECR image repo for the Docker image that the package automator will use
-resource "aws_ecr_repository" "package-automator-repo" {
-  name = "arm-package-generator-container"
-
+resource "aws_ecrpublic_repository" "package-automator-repo" {
+  provider = aws.us-east-1
   force_delete = true
+  repository_name = "arm-package-generator-container"
 }
 
 # The S3 bucket that the package automator tasks will upload the finalized Python ARM packages to
@@ -107,6 +107,12 @@ resource "aws_ecs_task_definition" "package-task-definition" {
           "awslogs-stream-prefix": "ecs"
         }
     },
+    "entryPoint": [
+        "python",
+        "-m",
+        "pip",
+        "install"
+      ],
     "name": "python-arm-packager-task",
     "image": "${aws_ecr_repository.package-automator-repo.repository_url}",
     "cpu": 256,
