@@ -114,13 +114,17 @@ resource "aws_ecs_task_definition" "package-task-definition" {
           "awslogs-stream-prefix": "ecs"
         }
     },
+    "environment": [
+        {
+          "name": "S3_BUCKET_URL",
+          "value": "${aws_s3_bucket.package-output-bucket.id}"
+        }
+      ],
     "entryPoint": [
-        "python",
-        "-m",
-        "pip",
-        "install"
+        "packager.sh"
       ],
     "name": "python-arm-packager-task",
+    "workingDirectory": "/home/scripts",
     "image": "${aws_ecrpublic_repository.package-automator-repo.repository_uri}",
     "cpu": 256,
     "memory": 1024

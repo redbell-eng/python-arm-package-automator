@@ -21,11 +21,23 @@ source "docker" "arm-container" {
 build {
   sources = ["source.docker.arm-container"]
 
-  # Install awscli
+  # Install awscli and create /home/scripts directory
   provisioner "shell" {
     inline = [
       "python -m pip install --upgrade pip",
-      "python -m pip install --no-cache-dir awscli"
+      "python -m pip install --no-cache-dir awscli",
+      "mkdir -p /home/scripts/"
+    ]
+  }
+
+  provisioner "file" {
+    source = "./packager.sh"
+    destination = "/home/scripts/packager.sh"
+  }
+
+  provisioner "shell" {
+    inline = [
+      "chmod +x /home/scripts/packager.sh"
     ]
   }
 
