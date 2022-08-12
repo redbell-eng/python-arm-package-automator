@@ -7,6 +7,7 @@ resource "aws_ecrpublic_repository" "package-automator-repo" {
 # The S3 bucket that the package automator tasks will upload the finalized Python ARM packages to
 resource "aws_s3_bucket" "package-output-bucket" {
   bucket = "python-arm-package-automator-${data.aws_caller_identity.current-account.account_id}-${var.environment}"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_acl" "package-output-bucket-acl" {
@@ -121,7 +122,7 @@ resource "aws_ecs_task_definition" "package-task-definition" {
         }
       ],
     "entryPoint": [
-        "packager.sh"
+        "/home/scripts/packager.sh"
       ],
     "name": "python-arm-packager-task",
     "workingDirectory": "/home/scripts",
